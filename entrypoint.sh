@@ -160,15 +160,22 @@ then
     git switch -c "$TARGET_BRANCH" || true
 fi
 
-echo "[+] Adding git commit"
-git add .
-
 echo "[+] git status:"
 git status
 
-echo "[+] git diff-index:"
-# git diff-index : to avoid doing the git commit failing if there are no changes to be commit
-git diff-index --quiet HEAD || git commit --message "$COMMIT_MESSAGE"
+if git diff-index --quiet HEAD; then
+  echo "[+] No changes detected. Exiting..."
+  # Eager return, in case there are no changes to be added / committed.
+  exit 0
+fi
+
+echo "[+] Changes detected";
+
+echo "[+] Adding git commit"
+git add .
+
+echo "[+] git commit:"
+git commit --message "$COMMIT_MESSAGE"
 
 echo "[+] Pushing git commit"
 # --set-upstream: sets de branch when pushing to a branch that does not exist

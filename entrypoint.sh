@@ -164,27 +164,22 @@ fi
 echo "[+] git status:"
 git status
 
-if git diff-index --quiet HEAD; then
-  echo "[+] No changes detected. Exiting..."
-  # Eager return, in case there are no changes to be added / committed.
-  exit 0
+if ! git diff-index --quiet HEAD; then
+  echo "[+] Changes detected";
+
+  echo "[+] Adding git commit"
+  git add .
+
+  echo "[+] git commit:"
+  git commit --message "$COMMIT_MESSAGE"
 fi
-
-echo "[+] Changes detected";
-
-echo "[+] Adding git commit"
-git add .
-
-echo "[+] git commit:"
-git commit --message "$COMMIT_MESSAGE"
-
 
 if [ "$FORCE" = "true" ]
 then
-  echo "[+] Force pushing..."
+  echo "[+] Force pushing to $TARGET_BRANCH..."
   FORCE_FLAG="-f"
 else
-  echo "[+] Pushing..."
+  echo "[+] Pushing to $TARGET_BRANCH..."
   FORCE_FLAG=""
 fi
 
